@@ -2,6 +2,7 @@ using TestApp.ToDoList.Store;
 using TestApp.ToDoList.Module;
 using TestApp.ToDoList.Tracker;
 using TestApp.ToDoList.Repository;
+using TestApp.Server.Middleware;
 
 
 namespace TestApp.Server
@@ -45,6 +46,7 @@ namespace TestApp.Server
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider svcProv)
     {
 
+      app.UseMiddleware<ExceptionHandlingMiddleware>(); 
       // Enable Swagger in all environments
       app.UseSwagger();
       app.UseSwaggerUI();
@@ -53,8 +55,10 @@ namespace TestApp.Server
       appLifetime.ApplicationStarted.Register(onApplicationStarted);
 
       app.UseRouting();
-      app.UseCors();
-
+   
+      app.UseCors();  
+      app.UseHttpsRedirection(); 
+        
       app.UseAuthorization();
 
       app.UseEndpoints(endpoints =>

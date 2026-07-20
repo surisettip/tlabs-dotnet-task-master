@@ -65,7 +65,7 @@ namespace TestApp.ToDoList.Tracker
       item.Title = updatedTask.Title;
       item.IsCompleted = updatedTask.IsCompleted;
       item.CompletedAt = updatedTask.IsCompleted ? DateTime.UtcNow : null;
-      item.Tags = updatedTask.Tags; 
+      item.Tags = updatedTask.Tags;
       repository.Update(item);
       return item;
     }

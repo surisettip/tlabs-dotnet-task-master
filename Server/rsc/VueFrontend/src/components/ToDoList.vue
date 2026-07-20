@@ -1,5 +1,14 @@
 ﻿<template>
   <div class="formContainer">
+
+    <div v-if="error" class="errorMessage">
+      {{ error }}
+    </div>
+
+    <div v-if="!error && todos.length === 0" class="infoMessage">
+      No tasks found.
+    </div>
+
     <h1 class="pageHeader">My To-Do List</h1>
 
     <div class="createToDoItemContainer">
@@ -80,6 +89,7 @@ export default defineComponent({
   async setup() {
     const todoStore = useToDoStore();
     const todos = computed(() => todoStore.tasks);
+    const error = computed(() => todoStore.error);
 
     const selectedSort = ref("title");
     const selectedOrder = ref(true);
@@ -112,17 +122,18 @@ export default defineComponent({
       return Array.from(tagSet).sort();
     });
 
-    const addTask = async () => {
-      if (newTask.value.trim()) {
-        await todoStore.addTask({
-          title: newTask.value,
-          isCompleted: false,
-          tags: newTaskTags.value.trim(),
-        });
-        newTask.value = "";
-        newTaskTags.value = "";
-      }
-    };
+  const addTask = async () => {
+  await todoStore.addTask({
+    title: newTask.value,
+    isCompleted: false,
+    tags: newTaskTags.value.trim(),
+  });
+
+  if (!todoStore.error) {
+    newTask.value = "";
+    newTaskTags.value = "";
+  }
+};
 
     const deleteTask = async (task) => {
       await todoStore.deleteTask(task);
@@ -135,18 +146,14 @@ export default defineComponent({
     return {
       todos, newTask, newTaskTags, selectedSort, selectedOrder, selectedTag,
       allTags, sortTasks, addTask, deleteTask, updateTask, searchText, refreshTasks,
-      showChips,
+      showChips, error, todoStore,
     };
   },
 });
 </script>
 
 <style scoped>
-.pageHeader {
-  text-align: center;
-  margin-bottom: 8px;
-}
-
+.pageHeader { text-align: center; margin-bottom: 8px; }
 .completed { text-decoration: line-through; }
 .sortContainer { display: flex; gap: 10px; align-items: center; margin-top: 15px; }
 .chipToggleContainer { margin-top: 10px; font-size: 14px; }
@@ -181,4 +188,28 @@ export default defineComponent({
 .searchContainer input { width: 100%; }
 .tagChips { display: flex; gap: 6px; margin: 4px 0 8px 0; }
 .chip { background: #eee; border-radius: 12px; padding: 2px 8px; font-size: 12px; }
+
+.errorMessage {
+  margin-top: 10px;
+  padding: 10px;
+
+  color: #842029;
+  background-color: #f8d7da;
+  border: 1px solid #f5c2c7;
+  border-radius: 4px;
+
+  font-size: 14px;
+}
+
+.infoMessage {
+  margin-top: 10px;
+  padding: 10px;
+
+  color: #055160;
+  background-color: #cff4fc;
+  border: 1px solid #b6effb;
+  border-radius: 4px;
+
+  font-size: 14px;
+}
 </style>
