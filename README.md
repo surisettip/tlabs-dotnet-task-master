@@ -39,10 +39,10 @@ The Frontend will be available under http://localhost:5173/
 
 ## Backend
 
-* There are a few problems with the app. Update/delete functionality does not work properly
-* Implement Tags for the ToDo Item. Allow adding/removing tags for each item
-* Implement common error handling for the application
-* Implement filter and sort functionality for the ToDo items
+* There are a few problems with the app. Update/delete functionality does not work properly - Done
+* Implement Tags for the ToDo Item. Allow adding/removing tags for each item - Done
+* Implement common error handling for the application - Done
+* Implement filter and sort functionality for the ToDo items - Done
 * (Bonus task) Implement caching
 * (Bonus task) Implement authentication for the application
 * (Bonus task) Implement pagination for the ToDo items
@@ -50,9 +50,9 @@ The Frontend will be available under http://localhost:5173/
 
 ## Frontend
 
-* Fix update/delete functionality
-* Add filter/sort functionality
-* (Bonus) Tags create/edit/delete functionality
+* Fix update/delete functionality - Done
+* Add filter/sort functionality - Done
+* (Bonus) Tags create/edit/delete functionality - Done
 * (Bonus) Add a UI components library (e.g. Quasar) to the project
 * (Bonus) Use pagination/infinite scroll for the elements
 * (Bonus) Authentication
