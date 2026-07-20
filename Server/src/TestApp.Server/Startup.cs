@@ -24,7 +24,8 @@ namespace TestApp.Server
 
       // Configure app services
       services.AddScoped<IToDoListTracker, ToDoListTracker>();
-      services.AddSingleton<IToDoItemsRepository, ToDoItemsRepository>();
+      // Changed to scoped
+      services.AddScoped<IToDoItemsRepository, ToDoItemsRepository>();
       services.AddScoped<ToDoListEntityModel>();
 
       services.AddCors(options =>
@@ -53,7 +54,7 @@ namespace TestApp.Server
 
       app.UseRouting();
       app.UseCors();
-      
+
       app.UseAuthorization();
 
       app.UseEndpoints(endpoints =>
