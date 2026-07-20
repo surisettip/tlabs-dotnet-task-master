@@ -28,12 +28,14 @@ namespace TestApp.Server
       services.AddScoped<ToDoListEntityModel>();
 
       services.AddCors(options =>
-      {
-        options.AddDefaultPolicy(policy =>
-        {
-          policy.AllowAnyOrigin()
-            .AllowAnyHeader();
-        });
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyOrigin()
+                      .AllowAnyHeader()
+                      // Added AllowAnyMethod() for complete CORS support.
+                      .AllowAnyMethod();
+                });
       });
 
       services.AddEndpointsApiExplorer();
@@ -50,9 +52,9 @@ namespace TestApp.Server
       appLifetime.ApplicationStarted.Register(onApplicationStarted);
 
       app.UseRouting();
-      app.UseAuthorization();
-
       app.UseCors();
+      
+      app.UseAuthorization();
 
       app.UseEndpoints(endpoints =>
         {
