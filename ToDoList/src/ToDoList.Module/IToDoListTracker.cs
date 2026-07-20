@@ -12,8 +12,9 @@ namespace TestApp.ToDoList.Module
     /// Adds a new to-do item.
     /// </summary>
     /// <param name="title"></param>
+    /// <param name="tags"></param>
     /// <returns></returns>
-    ToDoItem AddItem(string title);
+    ToDoItem AddItem(string title, string? tags = null);
     /// <summary>
     /// Removes a to-do item.
     /// </summary>

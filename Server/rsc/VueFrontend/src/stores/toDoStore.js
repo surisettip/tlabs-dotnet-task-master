@@ -5,14 +5,12 @@ export const useToDoStore = defineStore("toDoStore", {
     tasks: [],
   }),
   actions: {
-  async fetchTasks(search = "", sortBy = "id", ascending = true) {
-      fetch(
-        `http://localhost:5000/api/tasks?search=${encodeURIComponent(search)}&sortBy=${sortBy}&ascending=${ascending}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          this.tasks = data;
-        });
+   async fetchTasks(search = "", sortBy = "id", ascending = true, tag = "") {
+      const response = await fetch(
+        `http://localhost:5000/api/tasks?search=${encodeURIComponent(search)}&sortBy=${sortBy}&ascending=${ascending}&tag=${encodeURIComponent(tag)}`
+      );
+      const data = await response.json();
+      this.tasks = data;
     },
     async addTask(task) {
       await fetch("http://localhost:5000/api/tasks", {

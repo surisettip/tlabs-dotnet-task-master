@@ -22,13 +22,13 @@ namespace TestApp.ToDoList.Repository
       if (!context.ToDoItems.Any())
       {
         context.ToDoItems.AddRange(
-        new[] {
-          new ToDoItem { Title = "Laundry"},
-          new ToDoItem { Title = "Grocery Shopping", IsCompleted = true},
-          new ToDoItem { Title = "Pay Bills"},
-          new ToDoItem { Title = "Clean the House", IsCompleted = true},
-        }
-      );
+          new[] {
+            new ToDoItem { Title = "Laundry", Tags = "home, chores" },
+            new ToDoItem { Title = "Grocery Shopping", IsCompleted = true, Tags = "chores,shopping" },
+            new ToDoItem { Title = "Pay Bills", Tags = "finance,urgent" },
+            new ToDoItem { Title = "Clean the House", IsCompleted = true, Tags = "chores" },
+          }
+        );
         context.SaveChanges();
       }
     }

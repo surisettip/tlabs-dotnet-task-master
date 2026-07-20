@@ -23,10 +23,9 @@ namespace TestApp.ToDoList.Tracker
     }
 
     /// <inheritdoc/>
-    public ToDoItem AddItem(string title)
+    public ToDoItem AddItem(string title, string? tags = null)
     {
-      // Implementation for adding a to-do item
-      var newItem = new ToDoItem { Title = title, IsCompleted = false };
+      var newItem = new ToDoItem { Title = title, IsCompleted = false, Tags = tags }; 
       newItem = repository.Create(newItem);
       return newItem;
     }
@@ -66,6 +65,7 @@ namespace TestApp.ToDoList.Tracker
       item.Title = updatedTask.Title;
       item.IsCompleted = updatedTask.IsCompleted;
       item.CompletedAt = updatedTask.IsCompleted ? DateTime.UtcNow : null;
+      item.Tags = updatedTask.Tags; 
       repository.Update(item);
       return item;
     }

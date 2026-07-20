@@ -30,5 +30,10 @@ namespace TestApp.ToDoList.Entity
     /// Completion date of the to-do item.
     /// </summary>
     public DateTime? CompletedAt { get; set; }
+
+    /// <summary>
+    /// Tags of the to-do item
+    /// </summary>
+    public string? Tags { get; set; } // comma-separated, e.g. "work,urgent"
   }
 }
