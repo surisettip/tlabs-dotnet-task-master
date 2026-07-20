@@ -15,10 +15,46 @@ namespace TestApp.Server.Controllers
       this.toDoListTracker = toDoListTracker;
     }
 
-    [HttpGet]
-    public IList<ToDoItem> GetTasks()
+   [HttpGet]
+    public IList<ToDoItem> GetTasks(
+        string? search = null,
+        string? sortBy = "id",
+        bool ascending = true)
     {
       var tasks = toDoListTracker.GetAllItems();
+
+      // Search
+      if (!string.IsNullOrWhiteSpace(search))
+      {
+        tasks = tasks
+            .Where(x => x.Title.Contains(search, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+      }
+
+      // Sort
+      tasks = (sortBy?.ToLower() switch
+      {
+        "title" => ascending
+            ? tasks.OrderBy(x => x.Title)
+            : tasks.OrderByDescending(x => x.Title),
+
+        "iscompleted" => ascending
+            ? tasks.OrderBy(x => x.IsCompleted).ThenBy(x => x.Title)
+            : tasks.OrderByDescending(x => x.IsCompleted).ThenBy(x => x.Title),
+
+        "createdat" => ascending
+            ? tasks.OrderBy(x => x.CreatedAt)
+            : tasks.OrderByDescending(x => x.CreatedAt),
+
+        "completedat" => ascending
+            ? tasks.OrderBy(x => x.CompletedAt)
+            : tasks.OrderByDescending(x => x.CompletedAt),
+
+        _ => ascending
+            ? tasks.OrderBy(x => x.Id)
+            : tasks.OrderByDescending(x => x.Id)
+      }).ToList();
+
       return tasks.ToList();
     }
 

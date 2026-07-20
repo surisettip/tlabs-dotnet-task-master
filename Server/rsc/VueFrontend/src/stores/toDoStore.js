@@ -5,9 +5,10 @@ export const useToDoStore = defineStore("toDoStore", {
     tasks: [],
   }),
   actions: {
-    fetchTasks() {
-      // get tasks from localhost:5000/api/tasks
-      fetch("http://localhost:5000/api/tasks")
+  async fetchTasks(search = "", sortBy = "id", ascending = true) {
+      fetch(
+        `http://localhost:5000/api/tasks?search=${encodeURIComponent(search)}&sortBy=${sortBy}&ascending=${ascending}`
+      )
         .then((response) => response.json())
         .then((data) => {
           this.tasks = data;
