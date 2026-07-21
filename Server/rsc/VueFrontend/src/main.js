@@ -1,9 +1,25 @@
+
 import { createApp } from 'vue'
-import { Quasar } from 'quasar'
-import 'quasar/src/css/index.sass'
+import { createPinia } from 'pinia'
 
 import App from './App.vue'
+import router from './router'
 
-createApp(App)
-  .use(Quasar)
-  .mount('#app')
+const app = createApp(App)
+
+app.use(createPinia())
+app.use(router)
+
+app.config.errorHandler = (
+  err,
+  instance,
+  info
+) => {
+  console.error(
+    "Global Vue Error:",
+    err,
+    info
+  );
+};
+
+app.mount('#app')

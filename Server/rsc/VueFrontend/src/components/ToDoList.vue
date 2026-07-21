@@ -63,7 +63,7 @@
           <input :class="{ completed: task.isCompleted, editInput: true }" v-model="task.title"
                  @blur="updateTask(task)" @keyup.enter="updateTask(task)" />
 
-          <input v-if="!showChips" class="tagInput" v-model="task.tags" placeholder="tags"
+          <input class="tagInput" v-model="task.tags" placeholder="tags"
                  @blur="updateTask(task)" @keyup.enter="updateTask(task)" />
 
           <q-btn class="deleteButton" @click="deleteTask(task)">Delete</q-btn>
