@@ -76,6 +76,11 @@ export const useToDoStore = defineStore("toDoStore", {
 
         this.tasks = data.items || [];
         this.totalCount = data.totalCount || 0;
+
+        console.log("Store Tasks:", this.tasks);
+        console.log("Store Total Count:", this.totalCount);
+
+
       } catch (error) {
           if (error instanceof TypeError) {
             this.error =
@@ -91,11 +96,12 @@ export const useToDoStore = defineStore("toDoStore", {
 
     async addTask(task) {
       try {
-    // Validate title
-    if (!task.title || task.title.trim() === "") {
-      this.error = "Title is required.";
-      return;
-    }
+        // Validate title
+        this.error = null;
+        if (!task.title || task.title.trim() === "") {
+          this.error = "Title is required.";
+          return;
+        }
 
         const response = await fetch(
           "http://localhost:5000/api/tasks",

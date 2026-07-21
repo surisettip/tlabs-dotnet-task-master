@@ -26,6 +26,8 @@ namespace TestApp.Server
     }
     public void ConfigureServices(IServiceCollection services)
     {
+      //Caching
+      services.AddMemoryCache();
       // Add DB
       services.AddDbContext<ToDoListDbContext>();
 

@@ -1,19 +1,26 @@
 ﻿<template>
   <div class="formContainer">
-
     <div v-if="error" class="errorMessage">
       {{ error }}
     </div>
 
-    <div v-if="!error && todos.length === 0" class="infoMessage">
-      No tasks found.
-    </div>
+    <div v-if="!error && todos.length === 0" class="infoMessage">No tasks found.</div>
 
     <h1 class="pageHeader">My To-Do List</h1>
 
     <div class="createToDoItemContainer">
-      <input class="createInput" v-model="newTask" @keyup.enter="addTask" placeholder="Add a new todo" />
-      <input class="tagInput" v-model="newTaskTags" @keyup.enter="addTask" placeholder="tags (comma separated)" />
+      <input
+        class="createInput"
+        v-model="newTask"
+        @keyup.enter="addTask"
+        placeholder="Add a new todo"
+      />
+      <input
+        class="tagInput"
+        v-model="newTaskTags"
+        @keyup.enter="addTask"
+        placeholder="tags (comma separated)"
+      />
       <button class="createButton" @click="addTask">Add</button>
     </div>
 
@@ -46,12 +53,14 @@
     </div>
 
     <div class="searchContainer">
-      <input v-model="searchText"
-       @input="
+      <input
+        v-model="searchText"
+        @input="
           currentPage = 1;
           refreshTasks();
         "
-      placeholder="Search tasks..." />
+        placeholder="Search tasks..."
+      />
     </div>
 
     <div class="columnHeaderRow">
@@ -65,59 +74,75 @@
       <div v-for="task in todos" :key="task.id">
         <div class="toDoRow">
           <input type="checkbox" @change="updateTask(task)" v-model="task.isCompleted" />
-          <input :class="{ completed: task.isCompleted, editInput: true }" v-model="task.title"
-                 @blur="updateTask(task)" @keyup.enter="updateTask(task)" />
+          <input
+            :class="{ completed: task.isCompleted, editInput: true }"
+            v-model="task.title"
+            @blur="updateTask(task)"
+            @keyup.enter="updateTask(task)"
+          />
 
-          <input class="tagInput" v-model="task.tags" placeholder="tags"
-                 @blur="updateTask(task)" @keyup.enter="updateTask(task)" />
+          <input
+            class="tagInput"
+            v-model="task.tags"
+            placeholder="tags"
+            @blur="updateTask(task)"
+            @keyup.enter="updateTask(task)"
+          />
 
           <button class="deleteButton" @click="deleteTask(task)">Delete</button>
         </div>
 
         <div class="tagChips" v-if="showChips && task.tags">
-          <span class="chip" v-for="t in task.tags.split(',').map(s => s.trim()).filter(Boolean)" :key="t">
+          <span
+            class="chip"
+            v-for="t in task.tags
+              .split(',')
+              .map((s) => s.trim())
+              .filter(Boolean)"
+            :key="t"
+          >
             {{ t }}
           </span>
         </div>
       </div>
-          <div class="pagination">
-    <button
-      :disabled="currentPage === 1"
-      @click="
-        currentPage--;
-        refreshTasks();
-      "
-    >
-      Previous
-    </button>
+      <div class="pagination">
+        <button
+          :disabled="currentPage === 1"
+          @click="
+            currentPage--;
+            refreshTasks();
+          "
+        >
+          Previous
+        </button>
 
-    <span>Page {{ currentPage }}</span>
+        <span>Page {{ currentPage }}</span>
 
-    <label>Page Size:</label>
+        <label>Page Size:</label>
 
-    <select
-      v-model="pageSize"
-      @change="
-        currentPage = 1;
-        refreshTasks();
-      "
-    >
-      <option :value="5">5</option>
-      <option :value="10">10</option>
-      <option :value="20">20</option>
-    </select>
+        <select
+          v-model="pageSize"
+          @change="
+            currentPage = 1;
+            refreshTasks();
+          "
+        >
+          <option :value="5">5</option>
+          <option :value="10">10</option>
+          <option :value="20">20</option>
+        </select>
 
-    <button
-     :disabled="!hasNextPage"
-      @click="
-        currentPage++;
-        refreshTasks();
-      "
-    >
-      Next
-    </button>
+        <button
+          :disabled="!hasNextPage"
+          @click="
+            currentPage++;
+            refreshTasks();
+          "
+        >
+          Next
+        </button>
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -136,15 +161,11 @@ export default defineComponent({
     const currentPage = ref(1);
     const pageSize = ref(5);
 
-       const hasNextPage = computed(() => {
-
-
+    const hasNextPage = computed(() => {
       console.log(`Current Page: ${currentPage.value}`);
       console.log(`Page Size: ${pageSize.value}`);
 
-      const hasMore =
-        currentPage.value * pageSize.value <
-        totalCount.value;
+      const hasMore = currentPage.value * pageSize.value < totalCount.value;
 
       console.log(`Current Page: ${currentPage.value}`);
       console.log(`Page Size: ${pageSize.value}`);
@@ -163,9 +184,7 @@ export default defineComponent({
     const showChips = ref(false);
 
     const refreshTasks = async () => {
-      const ascendingBool =
-        selectedOrder.value === true ||
-        selectedOrder.value === "true";
+      const ascendingBool = selectedOrder.value === true || selectedOrder.value === "true";
 
       await todoStore.fetchTasks(
         searchText.value,
@@ -173,19 +192,16 @@ export default defineComponent({
         ascendingBool,
         selectedTag.value,
         currentPage.value,
-        pageSize.value
+        pageSize.value,
       );
 
-      console.log(
-        "Store Total Count:",
-        todoStore.totalCount
-      );
+      console.log("Store Total Count:", todoStore.totalCount);
     };
 
     await refreshTasks();
 
     const sortTasks = async () => {
-       currentPage.value = 1;
+      currentPage.value = 1;
       await refreshTasks();
     };
 
@@ -201,28 +217,29 @@ export default defineComponent({
       return Array.from(tagSet).sort();
     });
 
-  const addTask = async () => {
-  await todoStore.addTask({
-    title: newTask.value,
-    isCompleted: false,
-    tags: newTaskTags.value.trim(),
-  });
-  await refreshTasks();
-  if (!todoStore.error) {
-    newTask.value = "";
-    newTaskTags.value = "";
-  }
-};
+    const addTask = async () => {
+      await todoStore.addTask({
+        title: newTask.value,
+        isCompleted: false,
+        tags: newTaskTags.value.trim(),
+      });
+
+      if (todoStore.error) {
+        return;
+      }
+
+      await refreshTasks();
+
+      newTask.value = "";
+      newTaskTags.value = "";
+    };
 
     const deleteTask = async (task) => {
       await todoStore.deleteTask(task);
 
       const remainingItems = totalCount.value - 1;
 
-      const maxPage = Math.max(
-        1,
-        Math.ceil(remainingItems / pageSize.value)
-      );
+      const maxPage = Math.max(1, Math.ceil(remainingItems / pageSize.value));
 
       if (currentPage.value > maxPage) {
         currentPage.value = maxPage;
@@ -237,20 +254,54 @@ export default defineComponent({
     };
 
     return {
-      todos, newTask, newTaskTags, selectedSort, selectedOrder, selectedTag,
-      allTags, sortTasks, addTask, deleteTask, updateTask, searchText, refreshTasks,
-      showChips, error, todoStore,currentPage, pageSize, hasNextPage
+      todos,
+      newTask,
+      newTaskTags,
+      selectedSort,
+      selectedOrder,
+      selectedTag,
+      allTags,
+      sortTasks,
+      addTask,
+      deleteTask,
+      updateTask,
+      searchText,
+      refreshTasks,
+      showChips,
+      error,
+      todoStore,
+      currentPage,
+      pageSize,
+      hasNextPage,
     };
   },
 });
 </script>
 
 <style scoped>
-.pageHeader { text-align: center; margin-bottom: 8px; }
-.completed { text-decoration: line-through; }
-.sortContainer { display: flex; gap: 10px; align-items: center; margin-top: 15px; }
-.chipToggleContainer { margin-top: 10px; font-size: 14px; }
-.chipToggleContainer label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.pageHeader {
+  text-align: center;
+  margin-bottom: 8px;
+}
+.completed {
+  text-decoration: line-through;
+}
+.sortContainer {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 15px;
+}
+.chipToggleContainer {
+  margin-top: 10px;
+  font-size: 14px;
+}
+.chipToggleContainer label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
 
 .columnHeaderRow {
   display: flex;
@@ -263,24 +314,77 @@ export default defineComponent({
   border-bottom: 1px solid #ccc;
   padding-bottom: 6px;
 }
-.colStatus { width: 20px; }
-.colTitle { flex-grow: 1; }
-.colTags { width: 120px; }
-.colActions { width: 50px; }
+.colStatus {
+  width: 20px;
+}
+.colTitle {
+  flex-grow: 1;
+}
+.colTags {
+  width: 120px;
+}
+.colActions {
+  width: 50px;
+}
 
-.toDoListContainer { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-.createToDoItemContainer { display: flex; flex-direction: row; gap: 10px; }
-.formContainer { display: flex; flex-direction: column; margin-left: auto; margin-right: auto; width: 400px; }
-.createButton { margin-right: auto; margin-left: 0; width: 50px; }
-.toDoRow { display: flex; gap: 10px; }
-.deleteButton { margin-right: auto; margin-left: 0; width: 50px; }
-.createInput { flex-grow: 1; }
-.editInput { flex-grow: 1; }
-.tagInput { width: 120px; }
-.searchContainer { margin-top: 15px;}
-.searchContainer input { width: 100%; }
-.tagChips { display: flex; gap: 6px; margin: 4px 0 8px 0; }
-.chip { background: #eee; border-radius: 12px; padding: 2px 8px; font-size: 12px; }
+.toDoListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+.createToDoItemContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
+}
+.createButton {
+  margin-right: auto;
+  margin-left: 0;
+  width: 50px;
+}
+.toDoRow {
+  display: flex;
+  gap: 10px;
+}
+.deleteButton {
+  margin-right: auto;
+  margin-left: 0;
+  width: 50px;
+}
+.createInput {
+  flex-grow: 1;
+}
+.editInput {
+  flex-grow: 1;
+}
+.tagInput {
+  width: 120px;
+}
+.searchContainer {
+  margin-top: 15px;
+}
+.searchContainer input {
+  width: 100%;
+}
+.tagChips {
+  display: flex;
+  gap: 6px;
+  margin: 4px 0 8px 0;
+}
+.chip {
+  background: #eee;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 12px;
+}
 
 .errorMessage {
   margin-top: 10px;
