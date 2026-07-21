@@ -116,8 +116,8 @@ namespace TestApp.Server
       app.UseRouting();
    
       app.UseCors();  
-      app.UseHttpsRedirection(); 
-        
+      app.UseHttpsRedirection();     
+      app.UseAuthentication();
       app.UseAuthorization();
 
       app.UseEndpoints(endpoints =>

@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestApp.ToDoList.Entity;
 using TestApp.ToDoList.Module;
@@ -7,6 +8,8 @@ using ToDoList.Module.Models;
 
 namespace TestApp.Server.Controllers
 {
+
+  [Authorize]
   [ApiController]
   [Route("api/tasks")]
   public class ToDoTasksController : ControllerBase
@@ -18,6 +21,7 @@ namespace TestApp.Server.Controllers
       this.toDoListTracker = toDoListTracker;
     }
 
+    [Authorize]
     [HttpGet]
     public ActionResult<PagedTaskResponse> GetTasks(
          string? search,
@@ -38,6 +42,7 @@ namespace TestApp.Server.Controllers
       return Ok(tasks);
     }
 
+    [Authorize]
     [HttpPost]
     public ToDoItem CreateTask([FromBody] ToDoItem newTask)
     {
@@ -45,6 +50,7 @@ namespace TestApp.Server.Controllers
       return task;
     }
 
+    [Authorize]
     [HttpPut("{id}")]
     public ToDoItem EditTask(int id, [FromBody] ToDoItem updatedTask)
     {
@@ -52,6 +58,7 @@ namespace TestApp.Server.Controllers
       return task;
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public ToDoItem DeleteTask(int id)
     {
