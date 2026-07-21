@@ -52,21 +52,30 @@ export const useToDoStore = defineStore("toDoStore", {
   state: () => ({
     tasks: [],
     error: null,
+    totalCount: 0,
   }),
 
   actions: {
-    async fetchTasks(search = "", sortBy = "id", ascending = true, tag = "") {
+    async fetchTasks(search = "", sortBy = "id", ascending = true, tag = "",pageNumber = 1,
+      pageSize = 10) {
       try {
         this.error = null;
 
         const response = await fetch(
-          `http://localhost:5000/api/tasks?search=${encodeURIComponent(search)}&sortBy=${sortBy}&ascending=${ascending}&tag=${encodeURIComponent(tag)}`,
+          `http://localhost:5000/api/tasks?search=${encodeURIComponent(search)}&sortBy=${sortBy}&ascending=${ascending}&tag=${encodeURIComponent(tag)}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
           {
             headers: getAuthHeaders(),
           }
         );
-         const data = await handleResponse(response);
-        this.tasks = data;
+        const data = await handleResponse(response);
+        console.log("FULL API RESPONSE:", data);
+        console.log("items:", data.items);
+        console.log("totalCount:", data.totalCount);
+        console.log("Items:", data.Items);
+        console.log("TotalCount:", data.TotalCount);
+
+        this.tasks = data.items || [];
+        this.totalCount = data.totalCount || 0;
       } catch (error) {
           if (error instanceof TypeError) {
             this.error =
@@ -98,7 +107,6 @@ export const useToDoStore = defineStore("toDoStore", {
         );
 
         await handleResponse(response);
-        await this.fetchTasks();
       } catch (error) {
     if (error instanceof TypeError) {
       this.error =
@@ -123,7 +131,6 @@ export const useToDoStore = defineStore("toDoStore", {
         );
 
         await handleResponse(response);
-        await this.fetchTasks();
       } catch (error) {
         if (error instanceof TypeError) {
           this.error =
@@ -149,7 +156,6 @@ export const useToDoStore = defineStore("toDoStore", {
         );
 
         await handleResponse(response);
-        await this.fetchTasks();
       } catch (error) {
         if (error instanceof TypeError) {
           this.error =

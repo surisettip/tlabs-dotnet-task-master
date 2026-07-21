@@ -46,7 +46,12 @@
     </div>
 
     <div class="searchContainer">
-      <input v-model="searchText" @input="refreshTasks" placeholder="Search tasks..." />
+      <input v-model="searchText"
+       @input="
+          currentPage = 1;
+          refreshTasks();
+        "
+      placeholder="Search tasks..." />
     </div>
 
     <div class="columnHeaderRow">
@@ -66,7 +71,7 @@
           <input class="tagInput" v-model="task.tags" placeholder="tags"
                  @blur="updateTask(task)" @keyup.enter="updateTask(task)" />
 
-          <q-btn class="deleteButton" @click="deleteTask(task)">Delete</q-btn>
+          <button class="deleteButton" @click="deleteTask(task)">Delete</button>
         </div>
 
         <div class="tagChips" v-if="showChips && task.tags">
@@ -75,7 +80,44 @@
           </span>
         </div>
       </div>
+          <div class="pagination">
+    <button
+      :disabled="currentPage === 1"
+      @click="
+        currentPage--;
+        refreshTasks();
+      "
+    >
+      Previous
+    </button>
+
+    <span>Page {{ currentPage }}</span>
+
+    <label>Page Size:</label>
+
+    <select
+      v-model="pageSize"
+      @change="
+        currentPage = 1;
+        refreshTasks();
+      "
+    >
+      <option :value="5">5</option>
+      <option :value="10">10</option>
+      <option :value="20">20</option>
+    </select>
+
+    <button
+     :disabled="!hasNextPage"
+      @click="
+        currentPage++;
+        refreshTasks();
+      "
+    >
+      Next
+    </button>
     </div>
+  </div>
   </div>
 </template>
 
@@ -90,6 +132,27 @@ export default defineComponent({
     const todoStore = useToDoStore();
     const todos = computed(() => todoStore.tasks);
     const error = computed(() => todoStore.error);
+    const totalCount = computed(() => todoStore.totalCount);
+    const currentPage = ref(1);
+    const pageSize = ref(5);
+
+       const hasNextPage = computed(() => {
+
+
+      console.log(`Current Page: ${currentPage.value}`);
+      console.log(`Page Size: ${pageSize.value}`);
+
+      const hasMore =
+        currentPage.value * pageSize.value <
+        totalCount.value;
+
+      console.log(`Current Page: ${currentPage.value}`);
+      console.log(`Page Size: ${pageSize.value}`);
+      console.log(`Total Count: ${totalCount.value}`);
+      console.log(`Has Next Page: ${hasMore}`);
+
+      return hasMore;
+    });
 
     const selectedSort = ref("title");
     const selectedOrder = ref(true);
@@ -100,13 +163,29 @@ export default defineComponent({
     const showChips = ref(false);
 
     const refreshTasks = async () => {
-      const ascendingBool = selectedOrder.value === true || selectedOrder.value === "true";
-      await todoStore.fetchTasks(searchText.value, selectedSort.value, ascendingBool, selectedTag.value);
+      const ascendingBool =
+        selectedOrder.value === true ||
+        selectedOrder.value === "true";
+
+      await todoStore.fetchTasks(
+        searchText.value,
+        selectedSort.value,
+        ascendingBool,
+        selectedTag.value,
+        currentPage.value,
+        pageSize.value
+      );
+
+      console.log(
+        "Store Total Count:",
+        todoStore.totalCount
+      );
     };
 
     await refreshTasks();
 
     const sortTasks = async () => {
+       currentPage.value = 1;
       await refreshTasks();
     };
 
@@ -128,7 +207,7 @@ export default defineComponent({
     isCompleted: false,
     tags: newTaskTags.value.trim(),
   });
-
+  await refreshTasks();
   if (!todoStore.error) {
     newTask.value = "";
     newTaskTags.value = "";
@@ -137,16 +216,30 @@ export default defineComponent({
 
     const deleteTask = async (task) => {
       await todoStore.deleteTask(task);
+
+      const remainingItems = totalCount.value - 1;
+
+      const maxPage = Math.max(
+        1,
+        Math.ceil(remainingItems / pageSize.value)
+      );
+
+      if (currentPage.value > maxPage) {
+        currentPage.value = maxPage;
+      }
+
+      await refreshTasks();
     };
 
     const updateTask = async (task) => {
       await todoStore.editTask(task);
+      await refreshTasks();
     };
 
     return {
       todos, newTask, newTaskTags, selectedSort, selectedOrder, selectedTag,
       allTags, sortTasks, addTask, deleteTask, updateTask, searchText, refreshTasks,
-      showChips, error, todoStore,
+      showChips, error, todoStore,currentPage, pageSize, hasNextPage
     };
   },
 });
@@ -184,7 +277,7 @@ export default defineComponent({
 .createInput { flex-grow: 1; }
 .editInput { flex-grow: 1; }
 .tagInput { width: 120px; }
-.searchContainer { margin-top: 15px; }
+.searchContainer { margin-top: 15px;}
 .searchContainer input { width: 100%; }
 .tagChips { display: flex; gap: 6px; margin: 4px 0 8px 0; }
 .chip { background: #eee; border-radius: 12px; padding: 2px 8px; font-size: 12px; }
@@ -211,5 +304,11 @@ export default defineComponent({
   border-radius: 4px;
 
   font-size: 14px;
+}
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 </style>

@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#nullable enable
+
+using Microsoft.AspNetCore.Mvc;
 using TestApp.ToDoList.Entity;
 using TestApp.ToDoList.Module;
+using ToDoList.Module.Models;
 
 namespace TestApp.Server.Controllers
 {
@@ -15,55 +18,30 @@ namespace TestApp.Server.Controllers
       this.toDoListTracker = toDoListTracker;
     }
 
-   [HttpGet]
-    public IList<ToDoItem> GetTasks(
-        string? search = null,
-        string? sortBy = "id",
-        bool ascending = true,
-        string? tag = null) // NEW
+    [HttpGet]
+    public ActionResult<PagedTaskResponse> GetTasks(
+         string? search,
+         string? sortBy = "id",
+         bool ascending = true,
+         string? tag = null,
+        int pageNumber = 1,
+         int pageSize = 10)
     {
-        var tasks = toDoListTracker.GetAllItems();
+      var tasks = toDoListTracker.GetTasks(
+          search,
+          sortBy,
+          ascending,
+          tag,
+          pageNumber,
+          pageSize);
 
-        // Search
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            tasks = tasks
-                .Where(x =>
-                    x.Title.Contains(search, StringComparison.OrdinalIgnoreCase)
-                    || (!string.IsNullOrWhiteSpace(x.Tags)
-                        && x.Tags.Contains(search, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
-        }
-
-
-        // NEW: filter by tag
-        if (!string.IsNullOrWhiteSpace(tag))
-        {
-            tasks = tasks
-                .Where(x => !string.IsNullOrWhiteSpace(x.Tags) &&
-                            x.Tags.Split(',', StringSplitOptions.TrimEntries)
-                                  .Contains(tag, StringComparer.OrdinalIgnoreCase))
-                .ToList();
-        }
-
-        tasks = (sortBy?.ToLower() switch
-        {
-            "title" => ascending ? tasks.OrderBy(x => x.Title) : tasks.OrderByDescending(x => x.Title),
-            "iscompleted" => ascending
-                ? tasks.OrderBy(x => x.IsCompleted).ThenBy(x => x.Title)
-                : tasks.OrderByDescending(x => x.IsCompleted).ThenBy(x => x.Title),
-            "createdat" => ascending ? tasks.OrderBy(x => x.CreatedAt) : tasks.OrderByDescending(x => x.CreatedAt),
-            "completedat" => ascending ? tasks.OrderBy(x => x.CompletedAt) : tasks.OrderByDescending(x => x.CompletedAt),
-            _ => ascending ? tasks.OrderBy(x => x.Id) : tasks.OrderByDescending(x => x.Id)
-        }).ToList();
-
-        return tasks.ToList();
+      return Ok(tasks);
     }
 
     [HttpPost]
     public ToDoItem CreateTask([FromBody] ToDoItem newTask)
     {
-      var task = toDoListTracker.AddItem(newTask.Title, newTask.Tags); 
+      var task = toDoListTracker.AddItem(newTask.Title, newTask.Tags);
       return task;
     }
 
