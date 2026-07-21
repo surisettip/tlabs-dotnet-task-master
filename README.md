@@ -43,9 +43,9 @@ The Frontend will be available under http://localhost:5173/
 * Implement Tags for the ToDo Item. Allow adding/removing tags for each item - Done
 * Implement common error handling for the application - Done
 * Implement filter and sort functionality for the ToDo items - Done
-* (Bonus task) Implement caching
-* (Bonus task) Implement authentication for the application
-* (Bonus task) Implement pagination for the ToDo items
+* (Bonus task) Implement caching - Done
+* (Bonus task) Implement authentication for the application - Done
+* (Bonus task) Implement pagination for the ToDo items - Done
 
 
 ## Frontend
@@ -53,9 +53,9 @@ The Frontend will be available under http://localhost:5173/
 * Fix update/delete functionality - Done
 * Add filter/sort functionality - Done
 * (Bonus) Tags create/edit/delete functionality - Done
-* (Bonus) Add a UI components library (e.g. Quasar) to the project
-* (Bonus) Use pagination/infinite scroll for the elements
-* (Bonus) Authentication
+* (Bonus) Add a UI components library (e.g. Quasar) to the project 
+* (Bonus) Use pagination/infinite scroll for the elements - Done
+* (Bonus) Authentication - Done
 * (Bonus) Do not reload the list on every update of an element
 
 ## Submition
