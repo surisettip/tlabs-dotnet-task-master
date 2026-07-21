@@ -66,7 +66,7 @@
           <input v-if="!showChips" class="tagInput" v-model="task.tags" placeholder="tags"
                  @blur="updateTask(task)" @keyup.enter="updateTask(task)" />
 
-          <button class="deleteButton" @click="deleteTask(task)">Delete</button>
+          <q-btn class="deleteButton" @click="deleteTask(task)">Delete</q-btn>
         </div>
 
         <div class="tagChips" v-if="showChips && task.tags">
